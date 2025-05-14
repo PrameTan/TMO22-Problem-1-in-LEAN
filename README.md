@@ -1,0 +1,1 @@
+# TMO22 Problem 1 in LEAN
