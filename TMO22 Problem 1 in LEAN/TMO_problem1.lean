@@ -1,8 +1,5 @@
 import Mathlib.Tactic
 import Mathlib.Util.Delaborators
-
-set_option warningAsError false
-
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.NumberTheory.Divisors
@@ -10,7 +7,8 @@ import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Nat.Factorization.PrimePow
 
-ืnamespace Nat
+set_option warningAsError false
+
 variable (n : Nat)
 
 --- Definition of the divisor function d(n) = number of divisors
@@ -18,7 +16,7 @@ def num_divisor (n : Nat) :=
   Finset.card (Nat.divisors n)
 
 def Burapha (n : Nat) :=
-  --- n is Burapha iff n is non-zero, d(n) is odd, and its divisor k < l satisfies d(k) ≤ d(l)
+  --- n is Burapha iff n is non-zero, d(n) is odd, and its divisors k < l satisfy d(k) ≤ d(l)
   n > 0 ∧ Odd (num_divisor n) ∧ (∀ k l, k < l → k ∣ n → l ∣ n → num_divisor (k) ≤ num_divisor (l))
 
 lemma mul_cancel_iff_coprime {a b c d : ℕ} (h₁ : gcd a d = 1) (h₂ : gcd b c = 1) (h₃ : a * b = c * d) : a = c := by
@@ -654,7 +652,7 @@ theorem main n : Burapha n ↔ (∃ k p, Nat.Prime p ∧ n = p ^ (2 * k)) := by
   --- We prove that if Burapha n then it is a square of a prime power
   · intro Bn
     rw [Burapha] at Bn
-    ---- Since n has odd number of divisor, it is a perfect square n = c^2
+    ---- Since n has an odd number of divisor, it is a perfect square n = c^2
     have nispfsq : ∃ c, n = c ^ 2 := by apply (num_divisor_odd_iff_square n (Bn.1)).mp; apply Bn.2.1
     ---- To prove that c is a prime power, let's clear out the case when c = 1 first
     have ⟨c, neqc2⟩ := nispfsq
@@ -684,7 +682,7 @@ theorem main n : Burapha n ↔ (∃ k p, Nat.Prime p ∧ n = p ^ (2 * k)) := by
         use p
         simp
         constructor
-        · exact ⟨pprime, pdivc⟩ --- Since p divide c, this is done
+        · exact ⟨pprime, pdivc⟩ --- Since p divides c, this is done
         · intro q qprime qdivc --- Now let q be another prime that divides c
           by_contra qnep --- By contradiction, suppose q ≠ p
           wlog h : p < q generalizing p q -- WLOG, let p < q
@@ -753,7 +751,7 @@ theorem main n : Burapha n ↔ (∃ k p, Nat.Prime p ∧ n = p ^ (2 * k)) := by
     have ngt0 : 0 < n := by
       rw [condit]
       refine Nat.pow_pos (Nat.Prime.pos pprime)
-    have nIsPrimePow : IsPrimePow n := by --- A little lemma, n is a prime power
+    have nIsPrimePow : IsPrimePow n := by --- A little lemma: n is a prime power
       have : IsPrimePow (p ^ (2 * m)) := by
         refine (isPrimePow_pow_iff ?_).mpr ?_
         · by_contra h
